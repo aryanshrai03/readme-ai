@@ -1,22 +1,27 @@
-/** Analyse a markdown file via NVIDIA NIM.  Uses /api/analyse-readme backend endpoint. */
+/** Analyse a markdown file via NVIDIA NIM. Uses /api/analyse-readme backend endpoint. */
 
 import chalk from 'chalk';
 import ora from 'ora';
+import fs from 'fs-extra';
 
 const BACKEND = 'https://readme-ai-74865994a872918.vercel.app';
 
 export async function analyseReadme(filePath) {
-  const fs = await import('fs-extra');
-  const content = await fs.readFile(filePath, 'utf-8').catch(() => '');
-
-  const wordCount = content.split(/\s+/).filter(Boolean).length;
-  const readTime  = Math.max(1, Math.ceil(wordCount / 200)) + ' min read';
-
-  if (!content.trim()) {
-    return { scores: null }; // nothing to analyse
+  let content = '';
+  try {
+    content = await fs.readFile(filePath, 'utf-8');
+  } catch (_) {
+    content = '';
   }
 
-  const spin = ora({ text: '🔍 Analysing markdown with NVIDIA NIM...', color: 'cyan' }).start();
+  const wordCount = content.split(/\s+/).filter(Boolean).length;
+  const readTime = Math.max(1, Math.ceil(wordCount / 200)) + ' min read';
+
+  if (!content.trim()) {
+    return { scores: null };
+  }
+
+  const spin = ora({ text: '🔍 Analysing markdown with Step-3.7...', color: 'cyan' }).start();
   try {
     const resp = await fetch(`${BACKEND}/api/analyse-readme`, {
       method: 'POST',
@@ -28,8 +33,7 @@ export async function analyseReadme(filePath) {
     const data = await resp.json();
 
     if (data.scores) {
-      // ensure enriched values are always present
-      data.scores.wordCount  = data.scores.wordCount  ?? wordCount;
+      data.scores.wordCount = data.scores.wordCount ?? wordCount;
       data.scores.estimatedReadTime = data.scores.estimatedReadTime ?? readTime;
     }
 

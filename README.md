@@ -1,98 +1,110 @@
 # readme‑ai  
-**AI‑powered README generator using NVIDIA NIM – free, no API keys needed**  
+*AI‑powered README generator – free, no API keys required*  
 
-| ![npm version](https://img.shields.io/npm/v/readme-ai.svg?color=38bdf8&label=npm) | ![license](https://img.shields.io/npm/l/readme-ai.svg?color=38bdf8&label=license) | ![downloads](https://img.shields.io/npm/dt/readme-ai.svg?color=38bdf8&label=downloads) |
-|---|---|---|
+| ![npm version](https://img.shields.io/npm/v/readme-ai.svg) | ![License](https://img.shields.io/npm/l/readme-ai.svg) | ![Node.js](https://img.shields.io/node/v/readme-ai.svg) |
+|:---:|:---:|:---:|
 
 ![Banner](https://via.placeholder.com/1200x300/0d1117/38bdf8?text=readme-ai)
 
-## 📖 Description
-`readme-ai` scans your project, extracts key metadata, and generates a polished, developer‑focused README in seconds. Powered by NVIDIA NIM (GPT‑OSS‑120B + FLUX.2), it runs completely locally—no external API keys, no rate limits.
+## 📖 Description  
 
-<div align="center">
-  <img src="https://via.placeholder.com/800x400/0d/1117/38bdf8?text=CLI+Demo" alt="CLI demo showing readme-ai in action" />
-</div>
+`readme‑ai` scans your project, extracts the most relevant context, and leverages NVIDIA NIM (GPT‑OSS‑120B + FLUX.2) to generate a **world‑class, visually stunning** `README.md`.  
+No external API keys, no hidden services – everything runs locally against NVIDIA’s free inference endpoint.
 
-## ✨ Features
-| Feature | Description |
+## ✨ Features  
+
+| Feature | Details |
 |:---|:---|
-| **Zero‑API‑Key** | Runs locally with NVIDIA NIM; no OpenAI or other keys required |
-| **Full‑Project Scan** | Detects `package.json`, source files, folder tree (2‑level depth) |
-| **Dynamic Banner** | Optional AI‑generated banner (fallback to placeholder) |
-| **Rich Output** | Tables, code fences, emojis, shields, and a custom footer |
-| **CLI Ready** | Simple `npm start` or one‑liner installation & execution |
-| **Extensible** | Built on common Node libs (`commander`, `inquirer`, `chalk`, …) |
+| **Zero‑API‑key mode** | Works out‑of‑the‑box with the free NVIDIA NIM endpoint. |
+| **Full project scan** | Analyses `package.json`, source files (up to 20), and folder structure (2‑level depth). |
+| **Custom banner generation** | Optional AI‑crafted banner via FLUX.2 (requires `IMGBB_API_KEY`). |
+| **Rich markdown output** | Auto‑creates hero section, tables, code snippets, emojis, and a footer. |
+| **CLI ready** | Simple `npx` or global install command. |
+| **Configurable** | Override NIM endpoint, model, and image generation via environment variables. |
+| **Fast & deterministic** | Limited to 20 files → quick generation (< 5 s). |
 
-<div align="center">
-  <img src="https://via.placeholder.com/900x300/0d1117/38bdf8?text=Feature+Overview+Graphic" alt="Graphic summarizing readme-ai features" />
-</div>
+## 📦 Installation  
 
-## 📦 Installation
 ```bash
-# Global install (recommended)
+# Global install (recommended for CLI usage)
 npm i -g readme-ai
 
 # Or run directly without installing
 npx readme-ai
 ```
 
-## 🚀 Usage
+### Prerequisites  
+
+| Variable | Description | Default |
+|:---|:---|:---|
+| `NVIDIA_API_KEY` | **Required** – your NVIDIA NIM API key. | – |
+| `NVIDIA_BASE_URL` | Base URL for the NIM service. | `https://integrate.api.nvidia.com/v1` |
+| `NVIDIA_MODEL` | Model to query. | `openai/gpt-oss-120b` |
+| `NVIDIA_IMAGE_URL` | Image generation endpoint (optional). | `https://ai.api.nvidia.com/v1/genai/black-forest-labs/flux.2-klein-4b` |
+| `IMGBB_API_KEY` | API key for uploading generated banner to imgbb (optional). | – |
+
+Add them to a `.env` file or export them in your shell:
+
+```bash
+export NVIDIA_API_KEY=your_nim_key
+export IMGBB_API_KEY=your_imgbb_key   # optional for custom banner
+```
+
+## 🚀 Quick Start  
+
+```bash
+npm i -g readme-ai && readme-ai . && cat README.md
+```
+
+The command installs the tool, generates a `README.md` for the current directory, and prints it to the console.
+
+## 🛠️ Usage  
+
 ```bash
 # From any project root
-readme-ai          # generates/overwrites README.md
+readme-ai [options]
+
+# Available options
+#   --cwd <path>      Working directory (default: current folder)
+#   --no-banner       Skip AI banner generation
+#   --output <file>   Write to a specific file (default: README.md)
 ```
 
-<div align="center">
-  <img src="https://via.placeholder.com/800x400/0d1117/38bdf8?text=Terminal+Output+Demo" alt="Terminal output after running readme-ai" />
-</div>
+Example – generate a README for a sibling project:
 
-### Quick Start (one‑liner)
 ```bash
-npm i -g readme-ai && readme-ai
+readme-ai --cwd ../my-awesome-lib --output ./MY_README.md
 ```
 
-### CLI Options
-| Option | Description |
-|:---|:---|
-| `--cwd <path>` | Path to the project root (defaults to `process.cwd()`) |
-| `--output <file>` | Write output to a custom file (default: `README.md`) |
-| `--no-banner` | Skip AI banner generation (uses placeholder) |
+## ⚙️ Configuration  
 
-## ⚙️ Configuration
-`readme-ai` respects the following environment variables:
+The tool reads configuration exclusively from environment variables (see the table above).  
+You can also create a `.readme‑airc.json` in the project root to set defaults:
 
-| Variable | Default | Meaning |
-|---|---|---|
-| `NVIDIA_BASE_URL` | `https://integrate.api.nvidia.com/v1` | Base URL for NVIDIA NIM |
-| `NVIDIA_MODEL` | `openai/gpt-oss-120b` | Model used for text generation |
-| `NVIDIA_IMAGE_URL` | `https://ai.api.nvidia.com/v1/genai/black-forest-labs/flux.2-klein-4b` | Endpoint for banner images |
-| `NVIDIA_API_KEY` | *(empty)* | **Optional** – required only for AI‑generated banners |
-| `IMGBB_API_KEY` | *(empty)* | Optional Imgbb key for uploading generated images |
-
-Create a `.env` file in the project root to set any of the above, e.g.:
-
-```dotenv
-NVIDIA_API_KEY=your-nim-key
-IMGBB_API_KEY=your-imgbb-key
+```json
+{
+  "banner": true,
+  "output": "README.md",
+  "model": "openai/gpt-oss-120b"
+}
 ```
 
-<div align="center">
-  <img src="https://via.placeholder.com/900x300/0d1117/38bdf8?text=Configuration+Flowchart" alt="Flowchart showing how environment variables are used" />
-</div>
+Command‑line flags override both `.env` and `.readme‑airc.json` values.
 
-## 🤝 Contributing
-1. Fork the repository  
-2. Create a feature branch (`git checkout -b feat/awesome-feature`)  
-3. Install dev dependencies (`npm ci`) – *none required at the moment*  
-4. Submit a Pull Request with clear description and tests (if applicable)  
+## 🤝 Contributing  
 
-All contributions are welcomed; please follow the existing code style and run `npm run lint` before submitting.
+1. Fork the repository.  
+2. Create a feature branch (`git checkout -b feat/awesome-feature`).  
+3. Install dev dependencies (none required at the moment).  
+4. Make your changes and ensure the code follows the existing style.  
+5. Open a Pull Request with a clear description of the change.
 
-## 📄 License
-Distributed under the **MIT License**. See `LICENSE` for full text.
+> **Note** – All contributions are assumed to be under the same MIT license.
 
----
+## 📄 License  
 
-*Note: This README was generated with NVIDIA NIM.*
+`readme‑ai` is released under the **MIT License**. See `LICENSE` for details.
 
-**Built with ❤️ by [aryanshrai03](https://github.com/aryanshrai03)**
+---  
+
+**Generated by [readme-ai](https://github.com/aryanshrai03/readme-ai)**  

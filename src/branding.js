@@ -29,7 +29,7 @@ export function displayBanner() {
 
   // ── info block — clickable name, version, link ──
   const pkgLine = chalk.bold('v1.0.0');
-  const nameLine = chalk.cyan.underline('github.com/aryanshrai03');
+  const nameLine = chalk.cyan.underline('readme-ai');
   const linkLine = chalk.gray('https://github.com/aryanshrai03/readme-ai');
 
   const info = boxen(
@@ -54,7 +54,7 @@ export function showSuccessBox(filePath, wordCount, duration) {
     chalk.white(`  📁 Saved to : ${filePath}\n`) +
     chalk.white(`  📊 Words    : ${wordCount}\n`) +
     chalk.white(`  ⏱ Managed   : ${duration}s\n`) +
-    chalk.hex('#3b82f6')("  ⭐ Star us : github.com/aryanshrai03/readme-ai");
+    chalk.hex('#3b82f6')("  ⭐ readme-ai : github.com/aryanshrai03/readme-ai");
 
   console.log(boxen(msg, {
     padding: 1,
