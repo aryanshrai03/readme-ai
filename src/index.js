@@ -20,6 +20,7 @@ import chalk                             from 'chalk';
 import fs                                from 'fs-extra';
 import path                              from 'path';
 import readline                          from 'readline';
+import ora from 'ora';
 
 const BACKEND = 'https://readme-ai-74865994a872918.vercel.app';
 

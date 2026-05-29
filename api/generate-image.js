@@ -18,7 +18,7 @@ export default async function handler(req, res) {
       height: Number(height),
       steps: Number(steps),
       seed: seed ?? Math.floor(Math.random() * 1_000_000),
-      cfg_scale: 7.5,
+      cfg_scale: 1,
     };
 
     const resp = await fetch(IMG_URL, {
