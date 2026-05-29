@@ -1,0 +1,56 @@
+# Environment variables / secrets
+*.env
+*.env.*
+.env
+.env.local
+.env.production
+.env.development
+.env.vercel
+.env.development.local
+api/.env
+api/.env.vercel
+
+# Dependencies
+node_modules/
+
+# Vercel
+.vercel/
+
+# Openclaude
+.openclaude/
+
+# Logs
+*.log
+logs/
+
+# Build output
+dist/
+build/
+.next/
+out/
+
+# Coverage
+coverage/
+
+# OpenClaude profile
+.openclaude-profile.json
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python (not part of this project, e.g. fix_index.py)
+*.py
+
+# Certificates / keys
+*.pem
+*.key
+*.cert
+
+# Editor / IDE
+.vscode/
+.idea/
+
+# Lock files (optional)
+package-lock.json
