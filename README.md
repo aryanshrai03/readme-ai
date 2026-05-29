@@ -10,7 +10,7 @@
 `readme-ai` scans your project, extracts key metadata, and generates a polished, developer‑focused README in seconds. Powered by NVIDIA NIM (GPT‑OSS‑120B + FLUX.2), it runs completely locally—no external API keys, no rate limits.
 
 <div align="center">
-  <img src="https://via.placeholder.com/800x400/0d1117/38bdf8?text=CLI+Demo" alt="CLI demo showing readme-ai in action" />
+  <img src="https://via.placeholder.com/800x400/0d/1117/38bdf8?text=CLI+Demo" alt="CLI demo showing readme-ai in action" />
 </div>
 
 ## ✨ Features

@@ -54,3 +54,6 @@ desktop.ini
 
 # Lock files (optional)
 package-lock.json
+
+# Prompts
+.prompt/
