@@ -1,24 +1,11 @@
-/**
- * Generate a premium README.md via the Vercel backend only.
- * No direct NVIDIA NIM calls from the CLI — all AI goes through the backend.
- */
+/** Generate a markdown file via the Vercel backend.  All AI goes through the backend — no direct API calls from CLI. */
 
 const BACKEND = 'https://readme-ai-74865994a872918.vercel.app';
 
 export async function generateReadme(context = {}, options = {}) {
-  // Build the payload the backend expects
   const payload = {
-    projectContext: context || {
-      projectName: 'my-project',
-      description: '',
-      packageJson: {},
-      folderStructure: {},
-      sourceFiles: [],
-      readmeContent: '',
-    },
-    options: {
-      noBanner: options.noBanner || false,
-    },
+    projectContext: context,
+    options,
   };
 
   const resp = await fetch(`${BACKEND}/api/generate-readme`, {
@@ -29,14 +16,11 @@ export async function generateReadme(context = {}, options = {}) {
 
   if (!resp.ok) {
     const text = await resp.text();
-    throw new Error(`Backend error ${resp.status}: ${text}`);
+    throw new Error(`Backend error ${resp.status}: ${text.slice(0, 200)}`);
   }
 
   const data = await resp.json();
   if (data.error) throw new Error(data.error);
 
-  return {
-    readme: data.readme,
-    duration: data.duration || '?',
-  };
+  return { readme: data.readme, duration: data.duration ?? '?' };
 }

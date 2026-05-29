@@ -1,3 +1,13 @@
 node_modules/
 .env
 *.log
+api/
+.prompt/
+.vercel/
+.openclaude-profile.json
+*.py
+fix_index.py
+.github/
+.claude/
+AGENTS.md
+package-lock.json

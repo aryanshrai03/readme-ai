@@ -1,12 +1,11 @@
-/**
- * Preview a README — stats and summary without AI.
- */
+/** Preview a markdown file — word count, read time, image and section count. */
 
 import fs from 'fs-extra';
 import path from 'path';
 
 export async function previewReadme(filePath) {
   const absPath = path.isAbsolute(filePath) ? filePath : path.join(process.cwd(), filePath);
+
   let content = '';
   try {
     content = await fs.readFile(absPath, 'utf-8');
@@ -14,7 +13,7 @@ export async function previewReadme(filePath) {
     content = '';
   }
 
-  const words = content.split(/\s+/).filter(Boolean).length;
+  const words    = content.split(/\s+/).filter(Boolean).length;
   const readTime = Math.max(1, Math.ceil(words / 200)) + ' min read';
   const imageCount = (content.match(/!\[.*?\]\(.*?\)/g) || []).length;
   const sections = [];
@@ -24,11 +23,5 @@ export async function previewReadme(filePath) {
     }
   }
 
-  return {
-    path: absPath,
-    wordCount: words,
-    readTime,
-    imageCount,
-    sections,
-  };
+  return { path: absPath, wordCount: words, readTime, imageCount, sections };
 }

@@ -1,57 +1,69 @@
-/**
- * File picker — inquirer list prompt over all .md files in cwd.
- * Returns { filePath, isNew } or null if cancelled.
- */
+/** File picker — inquirer prompt over .md files in cwd.  Returns { filePath, isNew } or null if cancelled. */
 
 import fs from 'fs-extra';
 import path from 'path';
-import chalk from 'chalk';
-import { glob } from 'glob';
+import { displayBanner } from './branding.js';
+
+function walkMd(dir, out = [], depth = 0) {
+  if (depth > 8) return out; // safety cap
+  let entries;
+  try { entries = fs.readdirSync(dir, { withFileTypes: true }); }
+  catch (_) { return out; }
+
+  for (const entry of entries) {
+    if (entry.name.startsWith('.') || entry.name === 'node_modules') continue;
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      walkMd(full, out, depth + 1);
+    } else if (entry.name.toLowerCase().endsWith('.md')) {
+      out.push(full);
+    }
+  }
+  return out;
+}
 
 export async function pickFile() {
-  const files = await glob('**/*.md', {
-    cwd: process.cwd(),
-    nodir: true,
-    ignore: ['node_modules/**', '.git/**'],
-    absolute: true,
-  });
+  const allFiles = walkMd(process.cwd()).sort();
 
-  const fileMap = new Map();
+  // Filter away files inside node_modules or .git
+  const clean = allFiles.filter(f => !f.includes('/node_modules/') && !f.includes('\\.git\\'));
+
   const choices = [];
+  const fileMap = new Map();
 
-  for (const abs of files.sort()) {
+  for (const abs of clean) {
     const rel = path.relative(process.cwd(), abs);
-    const stats = await fs.stat(abs).catch(() => null);
-    const size = stats ? ` (${(stats.size / 1024).toFixed(1)}KB)` : '';
+    const size = (fs.statSync(abs).size / 1024).toFixed(1);
     fileMap.set(rel, abs);
-    choices.push({ name: `📄 ${rel}${size}`, value: rel });
+    choices.push({ name: `  📄 ${rel}  (${size}KB)`, value: rel });
   }
 
-  choices.push({ name: '✨ Create new .md file', value: '__new__' });
-  choices.push({ name: '❌ Cancel', value: '__cancel__' });
+  choices.push({ name: '  ✨  Create new markdown file',  value: '__new__' });
+  choices.push({ name: '  ❌  Cancel',                    value: '__cancel__' });
 
   const inquirer = (await import('inquirer')).default;
-  const answer = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'selection',
-      message: 'Which markdown file would you like to work on?',
-      choices,
-      pageSize: 12,
-    },
-  ]);
+  const { selection } = await inquirer.prompt([{
+    type:    'list',
+    name:    'selection',
+    message: 'Which markdown file would you like to work on?',
+    choices,
+    pageSize: 16,
+  }]);
 
-  const sel = answer.selection;
-  if (sel === '__cancel__' || sel === '__new__') {
-    if (sel === '__new__') {
-      const { newName } = await inquirer.prompt([
-        { type: 'input', name: 'newName', message: chalk.cyan('Enter filename (e.g. TODO.md):'), default: 'NEW.md' },
-      ]);
-      const fp = path.join(process.cwd(), newName.endsWith('.md') ? newName : newName + '.md');
-      return { filePath: fp, isNew: true };
-    }
-    return null;
+  if (selection === '__cancel__') return null;
+
+  if (selection === '__new__') {
+    const { newName } = await inquirer.prompt([{
+      type:    'input',
+      name:    'newName',
+      message: 'Enter filename (eg. CHANGELOG.md, DOCS.md, README.md):',
+      default: 'NEW.md',
+    }]);
+    return {
+      filePath: path.join(process.cwd(), newName.endsWith('.md') ? newName : newName + '.md'),
+      isNew: true,
+    };
   }
 
-  return { filePath: fileMap.get(sel) || path.join(process.cwd(), sel), isNew: false };
+  return { filePath: fileMap.get(selection) || path.join(process.cwd(), selection), isNew: false };
 }

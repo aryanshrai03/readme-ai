@@ -5,11 +5,9 @@
  */
 
 import { OpenAI } from 'openai';
-import fs from 'fs';
-import path from 'path';
 
 const NIM_BASE = process.env.NVIDIA_BASE_URL || 'https://integrate.api.nvidia.com/v1';
-const NIM_MODEL = process.env.NVIDIA_MODEL || 'openai/gpt-oss-120b';
+const NIM_MODEL = process.env.NVIDIA_MODEL || 'stepfun-ai/step-3.7-flash';
 const IMG_URL = process.env.NVIDIA_IMAGE_URL || 'https://ai.api.nvidia.com/v1/genai/black-forest-labs/flux.2-klein-4b';
 const NIM_KEY = process.env.NVIDIA_API_KEY || '';
 

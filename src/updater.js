@@ -1,23 +1,29 @@
-/**
- * Overwrite the project's README.md with new content.
- */
+/** Chat-update a markdown file via the Vercel backend.  All AI goes through /api/update-readme. */
 
-import fs from 'fs-extra';
-import path from 'path';
-import chalk from 'chalk';
-import { spinner } from './branding.js';
+const BACKEND = 'https://readme-ai-74865994a872918.vercel.app';
 
-export async function updateReadme(newContent) {
-  const spin = spinner('🛠️ Updating README.md...');
+export async function updateReadme(newContent, instructions, conversationHistory = [], activeFile) {
+  const spin = ora({ text: '🤖 Sending update request...', color: 'cyan' }).start();
   try {
-    const outPath = path.join(process.cwd(), 'README.md');
-    await fs.writeFile(outPath, newContent, 'utf-8');
-    spin.succeed('README.md updated');
-    console.log(chalk.green(`✅ Updated ${outPath}`));
-    return outPath;
+    const resp = await fetch(`${BACKEND}/api/update-readme`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        currentContent:     newContent,
+        instructions,
+        conversationHistory,
+        activeFile: activeFile ?? 'unknown.md',
+      }),
+    });
+
+    if (!resp.ok) throw new Error(`Backend error ${resp.status}`);
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error);
+
+    spin.succeed('Update complete');
+    return { readme: data.readme, duration: data.duration ?? '?' };
   } catch (e) {
-    spin.fail('Failed to update README.md');
-    console.error(chalk.red(e));
+    spin.fail('Update failed');
     throw e;
   }
 }

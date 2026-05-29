@@ -1,34 +1,28 @@
+/** Local config — read/write ~/.readme-ai/config.json. */
+
 import { promises as fs } from 'fs';
 import path from 'path';
+import os from 'os';
 
-const CONFIG_DIR = path.join(os.homedir(), '.readme-ai');
-const CONFIG_PATH = path.join(CONFIG_DIR, 'config.json');
+const CONFIG_DIR  = path.join(os.homedir(), '.readme-ai');
+const CONFIG_FILE = path.join(CONFIG_DIR, 'config.json');
 
 export async function loadConfig() {
   try {
-    const data = await fs.readFile(CONFIG_PATH, 'utf-8');
-    return JSON.parse(data);
+    const raw   = await fs.readFile(CONFIG_FILE, 'utf-8');
+    return JSON.parse(raw);
   } catch (_) {
-    // No config file – return empty config (no API keys needed)
     return {};
   }
 }
 
 export async function saveConfig(config) {
   await fs.mkdir(CONFIG_DIR, { recursive: true });
-  await fs.writeFile(CONFIG_PATH, JSON.stringify(config, null, 2), 'utf-8');
-}
-
-// For compatibility – no interactive setup required in free mode
-export async function firstTimeSetup() {
-  console.log('No setup required for free mode.');
-  return {};
+  await fs.writeFile(CONFIG_FILE, JSON.stringify(config, null, 2), 'utf-8');
 }
 
 export async function resetConfig() {
   try {
-    await fs.unlink(CONFIG_PATH);
-    console.log('Config reset.');
-  } catch (_) {}
-  return {};
+    await fs.unlink(CONFIG_FILE);
+  } catch (_) { /* ignore */ }
 }
